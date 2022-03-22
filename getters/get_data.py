@@ -1,4 +1,6 @@
-
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname('__file__'), '../../')))
 from distutils import extension
 from email import header
 import encodings
@@ -6,7 +8,7 @@ from fileinput import filename
 from pkgutil import iter_modules
 from turtle import heading
 import requests
-import urls_dict as u
+from . import urls_dict as u
 import zipfile
 from bs4 import BeautifulSoup
 import unicodedata
@@ -59,13 +61,13 @@ class GetExpectedInflation:
         self.headers = headers
 
     def download_page_content(self):
-        '''Executa o download de um arquivo a partir de uma página da internet'''
+        '''Armazena dados de uma tabela HTML a partir de uma página da internet'''
         #Getting url and headers from external dict
         base_url = self.url
         print('Scraping url:', base_url)
 
         #Testing request object
-        test_page = requests.get(base_url, headers=headers)
+        test_page = requests.get(base_url, headers=self.headers)
 
         if test_page.status_code == 200:
             print('Approved access')
@@ -73,31 +75,42 @@ class GetExpectedInflation:
             print('Access Denied. Check headers...')
 
         #Download content from webpage
-        page = requests.get(base_url, headers=headers)
+        page = requests.get(base_url, headers=self.headers)
         soup = BeautifulSoup(page.text, 'html.parser')
         table = soup.find_all('table', attrs={'id':'grd_DXMainTable'})
 
-        table.find_all('tr')
-
+        data = []
         headings = []
-        for item in table:
+        for item in table[:10]:
             if 'Inflação' in item.getText():
-                
                 unicode = item.getText()
-                string = unicodedata.normalize('NFKD', unicode).encode('ascii', 'ignore')
-                print(string)
-                headings.append(string.strip('\n'))
+                #print(str(unicode).split('\n')[8][:-1])
+                headings.append(str(unicode).split('\n')[8][:-1])
+
+            #print(item.getText())
+            #print(type(item.getText()))
+            data.append(item.getText().split('\n'))
         
-        print(headings)
+        return headings, data
 
+    def clean_data(self, headings, data):
+        
+        ano = []
+        mes = []
+        valor = []
+        for item in data[0][11:]:
+            if item != '':
+                ano.append(item[:4])
+                mes.append(item[5:7])
+                valor.append(item[7:])
+        
+        return headings, ano, mes, valor
 
-        # datasets = []
-        # for row in table.find_all("tr")[1:]:
-        #     dataset = zip(headings, (td.get_text() for td in row.find_all("td")))
-        #     datasets.append(dataset)
-        # print(dataset)
+    def run(self):
+        headings, data = self.download_page_content()
+        headings, ano, mes, valor = self.clean_data(headings, data)
 
-
+        return headings, ano, mes, valor 
 
 
 if __name__=='__main__':
@@ -106,4 +119,4 @@ if __name__=='__main__':
     headers = u.headers
     get_ipca = GetExpectedInflation(url, headers)
 
-    get_ipca.download_page_content()
+    get_ipca.run()
