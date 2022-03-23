@@ -1,7 +1,8 @@
 urls = {
     'IPCA-IBGE': 'https://www.ibge.gov.br/estatisticas/economicas/precos-e-custos/9256-indice-nacional-de-precos-ao-consumidor-amplo.html?=&t=downloads',
     'IPCA-BD': 'https://storage.googleapis.com/basedosdados-public/one-click-download/br_ibge_ipca/mes_brasil.zip',
-    'Inflação Esperada' : 'http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=1693254712&module=M'
+    'Inflação Esperada' : 'http://www.ipeadata.gov.br/ExibeSerie.aspx?serid=1693254712&module=M',
+    'Taxa-Selic': 'https://www.bcb.gov.br/controleinflacao/historicotaxasjuros'
 
 }
 

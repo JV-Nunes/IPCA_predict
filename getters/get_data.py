@@ -8,7 +8,8 @@ from fileinput import filename
 from pkgutil import iter_modules
 from turtle import heading
 import requests
-from . import urls_dict as u
+#from . import urls_dict as u
+import urls_dict as u
 import zipfile
 from bs4 import BeautifulSoup
 import unicodedata
@@ -112,11 +113,56 @@ class GetExpectedInflation:
 
         return headings, ano, mes, valor 
 
+class GetInteresRate:
+    def __init__(self, url, headers):
+        self.url = url
+        self.headers = headers
+
+    def get_page_content(self):
+        '''Armazena dados de uma tabela HTML a partir de uma página da internet'''
+        #Getting url and headers from external dict
+        base_url = self.url
+        print('Scraping url:', base_url)
+
+        #Testing request object
+        test_page = requests.get(base_url, headers=self.headers)
+
+        if test_page.status_code == 200:
+            print('Approved access')
+        else:
+            print('Access Denied. Check headers...')
+
+        #Download content from webpage
+        page = requests.get(base_url, headers=self.headers)
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        print(soup.prettify())
+        
+        # for table in soup.find_all('table'):
+        #     print(table)
+            
+
+        data = []
+        headings = []
+        # for item in table[:10]:
+        #     if 'Inflação' in item.getText():
+        #         unicode = item.getText()
+        #         #print(str(unicode).split('\n')[8][:-1])
+        #         headings.append(str(unicode).split('\n')[8][:-1])
+
+        #     #print(item.getText())
+        #     #print(type(item.getText()))
+        #     data.append(item.getText().split('\n'))
+        
+        # return headings, data
+
+
 
 if __name__=='__main__':
+    
 
-    url = u.urls.get('Inflação Esperada')
+    url = u.urls.get('Taxa-Selic')
     headers = u.headers
-    get_ipca = GetExpectedInflation(url, headers)
+    get_ipca = GetInteresRate(url, headers)
 
-    get_ipca.run()
+    get_ipca.get_page_content()
