@@ -9,6 +9,7 @@ from pkgutil import iter_modules
 from turtle import heading
 import requests
 from . import urls_dict as u
+#import urls_dict as u
 import zipfile
 from bs4 import BeautifulSoup
 import unicodedata
