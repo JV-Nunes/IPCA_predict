@@ -8,11 +8,13 @@ from fileinput import filename
 from pkgutil import iter_modules
 from turtle import heading
 import requests
-#from . import urls_dict as u
-import urls_dict as u
+from requests_html import HTMLSession
+from . import urls_dict as u
+#import urls_dict as u
 import zipfile
 from bs4 import BeautifulSoup
 import unicodedata
+import csv
 
 #Made by João Victor Nunes
 
@@ -124,37 +126,35 @@ class GetInteresRate:
         base_url = self.url
         print('Scraping url:', base_url)
 
-        #Testing request object
-        test_page = requests.get(base_url, headers=self.headers)
+        session = HTMLSession()
+        r = session.get(base_url)
+        r.html.render()  # this call executes the js in the page
 
-        if test_page.status_code == 200:
-            print('Approved access')
-        else:
-            print('Access Denied. Check headers...')
+        data = [td.text for td in r.html.find('td')]
 
-        #Download content from webpage
-        page = requests.get(base_url, headers=self.headers)
-        soup = BeautifulSoup(page.text, 'html.parser')
+        return data
+    
+    def create_csv(self, data, file_path):
 
-        print(soup.prettify())
+        composite_list = [data[x:x+8] for x in range(0, len(data),8)]
+        header = ['nº','data', 'viés', 'Período de vigência', 'Meta SELIC', 'TBAN','Taxa SELIC_%','Taxa SELIC_%_aa' ]
+
+        for list in composite_list:
+            for i in range(0,len(list)):
+                list[i] = f"{list[i]}"
         
-        # for table in soup.find_all('table'):
-        #     print(table)
-            
+        # open the file in the write mode
+        with open(file_path, 'w', encoding='UTF8') as f:
+            # create the csv writer
+            writer = csv.writer(f)
 
-        data = []
-        headings = []
-        # for item in table[:10]:
-        #     if 'Inflação' in item.getText():
-        #         unicode = item.getText()
-        #         #print(str(unicode).split('\n')[8][:-1])
-        #         headings.append(str(unicode).split('\n')[8][:-1])
+            # write a row to the csv file
+            writer.writerow(header)
+            writer.writerows(composite_list)
 
-        #     #print(item.getText())
-        #     #print(type(item.getText()))
-        #     data.append(item.getText().split('\n'))
-        
-        # return headings, data
+    def run(self, file):
+        data = self.get_page_content()
+        self.create_csv(data, file)
 
 
 
@@ -165,4 +165,6 @@ if __name__=='__main__':
     headers = u.headers
     get_ipca = GetInteresRate(url, headers)
 
-    get_ipca.get_page_content()
+    data = get_ipca.get_page_content()
+    
+    get_ipca.create_csv(data, 'Data/extracted/taxa_de_juros.csv')
