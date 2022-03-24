@@ -165,10 +165,11 @@ if __name__=='__main__':
 
     """Quando executado no terminal, tudo abaixo desse condicional será chamado pelo compilador."""
 
-    url = u.urls.get('Taxa-Selic')
+    url1 = u.urls.get('IPCA-BD')
     headers = u.headers
-    get_ipca = GetInteresRate(url, headers)
-
-    data = get_ipca.get_page_content()
+    get_ipca = GetIPCA(url1, headers)
+    get_ipca.run('IPCA-serie-historica', 'zip', 'csv')
     
-    get_ipca.create_csv(data, 'Data/extracted/taxa_de_juros.csv')
+    url2 = u.urls.get('Taxa-Selic')
+    get_ir = GetInteresRate(url2, headers)
+    get_ir.run('taxa_de_juros.csv')
