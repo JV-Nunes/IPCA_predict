@@ -10,11 +10,14 @@ from turtle import heading
 import requests
 from requests_html import HTMLSession
 from . import urls_dict as u
-#import urls_dict as u
+#import urls_dict as u      #QUANDO EXECUTAR DIRETAMENTE ESTE ARQUIVO, REMOVER O COMENTÁRIO DESTA LINHA E COMENTAR A LINHA ACIMA
 import zipfile
 from bs4 import BeautifulSoup
 import unicodedata
 import csv
+
+"""Para fazer o download dos dados do IPCA e da taxa selic, executar este arquivo no terminal.
+    Um detalhe importante a ser realizado é o de trocar o método de import do arquivo urls_dict."""
 
 #Made by João Victor Nunes
 
@@ -159,7 +162,8 @@ class GetInteresRate:
 
 
 if __name__=='__main__':
-    
+
+    """Quando executado no terminal, tudo abaixo desse condicional será chamado pelo compilador."""
 
     url = u.urls.get('Taxa-Selic')
     headers = u.headers
