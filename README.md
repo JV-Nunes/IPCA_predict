@@ -39,3 +39,6 @@ Todas as variáveis foram coletadas a partir das instituições públicas que di
 
 ### Modelagem
 Foi utilizado um modelo de regressão, tendo como variável dependente a ser prevista o IPCA com base em 1991. O modelo utilizado foi o XGBoost,  modelo de Machine Learning que utiliza uma combinação de técnicas computacionais como Gradient Descend e Random Forests, incluindo em sua execução uma forte otimização de hardware.
+
+### Visualização
+Ainda não foi desenvolvida uma versão dinâmica de visualização. A imagem *model_visualization.png* demonstra de forma geral o desempenho do modelo
